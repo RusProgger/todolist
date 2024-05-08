@@ -1,0 +1,68 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        link(rel="stylesheet", href="css/style.css")
+        title TODO - Список завдань
+    body 
+        header.header.header-bg
+            .container 
+                .header__title
+                    a(href="#" aria-label="todo") Todo list
+        
+        main.main
+            .container 
+                section.todo
+                    h1.todo__title Добавити завдання:
+                    input.todo__input(type="text", id="todoInput" placeholder="Напишіть задачу")
+                    button.todo__button(type="button" onclick="addTodo()") Добавити
+                    ul#todoList
+        script.
+
+                function addTodo() {
+                const todoInput = document.getElementById("todoInput");
+                const todoText = todoInput.value.trim();
+                
+                if (todoText !== "") {
+                    const todoList = document.getElementById("todoList");
+                    const todoItem = document.createElement("li");
+                    todoItem.textContent = todoText;
+                    
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.onclick = function() {
+                        todoList.removeChild(todoItem);
+                        saveTodoList();
+                    };
+                    todoItem.appendChild(deleteButton);
+                    
+                    todoList.appendChild(todoItem);
+                    saveTodoList();
+                    
+                    todoInput.value = "";
+                }
+            }
+
+            function saveTodoList() {
+                const todoList = document.getElementById("todoList").innerHTML;
+                localStorage.setItem("todoList", todoList);
+            }
+
+            function loadTodoList() {
+                const savedTodoList = localStorage.getItem("todoList");
+                if (savedTodoList) {
+                    document.getElementById("todoList").innerHTML = savedTodoList;
+                    const deleteButtons = document.querySelectorAll("#todoList button");
+                    deleteButtons.forEach(button => {
+                        button.onclick = function() {
+                            const todoItem = button.parentElement;
+                            todoItem.parentElement.removeChild(todoItem);
+                            saveTodoList();
+                        };
+                    });
+                }
+            }
+
+            window.onload = loadTodoList;
+                
